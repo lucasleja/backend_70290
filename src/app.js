@@ -3,6 +3,7 @@ import handlebars from 'express-handlebars'
 import cartsRoutes from './routes/carts.route.js'
 import productsRoutes from './routes/products.router.js'
 import __dirname from './utils.js';
+import viewsRouter from './routes/views.routes.js'
 
 
 const app = express();
@@ -18,23 +19,14 @@ app.set('view engine', 'handlebars');
 app.use(express.static(__dirname + "/public"))
 
 
-// Ruta de prueba para Hbs
-app.get('/hello', (req, res) => {
-    // usuario de prueba
-    const usuario = {
-        nombre: 'Lucas',
-        email: 'johndoe@example.com',
-        edad: 30
-    }
-
-    res.render('hello', usuario)
-})
 
 
 const PORT = 8080;
 
 app.use('/api/carts', cartsRoutes)
 app.use('/api/products', productsRoutes)
+
+app.use('/', viewsRouter)
 
 
 app.listen(PORT, () => {
