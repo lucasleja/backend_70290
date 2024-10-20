@@ -29,17 +29,18 @@ try {
 })
 
 router.post('/', async (req, res) => {
-try {
-    const { title, description, code, price, stock, category, thumbnails } = req.body;
-    if (!title || !description || !code || !price || !stock || !category) {
-    return res.status(400).json({ error: 'Todos los campos son obligatorios' })
+    try {
+        const { title, description, code, price, stock, category, thumbnails } = req.body;
+        if (!title || !description || !code || !price || !stock || !category) {
+            return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+        }
+        const product = await prodManag.addProduct({ title, description, code, price, stock, category, thumbnails });
+        res.status(201).json(product);
+    } catch (error) {
+        console.error('Error al agregar producto:', error);
+        res.status(500).json({ error: 'Error al agregar producto' });
     }
-    const product = await productManager.addProduct({ title, description, code, price, stock, category, thumbnails })
-    res.status(201).json(product)
-} catch (error) {
-    console.log(error);
-}
-})
+});
 
 router.put('/:pid', async (req, res) => {
 try {

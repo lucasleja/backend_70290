@@ -28,33 +28,42 @@ socket.on('productsList', products=>{
     })
 })
 
-const btnForm = document.getElementById("btnForm")
-const inputs = document.querySelectorAll(".input")
+const btnForm = document.getElementById("btnForm");
+const inputs = document.querySelectorAll(".input");
 
-let newProduct = {}
+let newProduct = {};
 
-inputs.forEach(input=>{
-    input.addEventListener("change", (e)=>{
-        newProduct = {...newProduct, [e.target.name]: e.target.value
-        }
-    })
-})
+inputs.forEach(input => {
+    input.addEventListener("change", (e) => {
+        newProduct[e.target.name] = e.target.value;
+    });
+});
 
-
-const hidden = document.querySelector('.hidden')
-
-btnForm.addEventListener("click", (e)=>{
-    e.preventDefault()
-    if (!newProduct.title || !newProduct.description || !newProduct.code || !newProduct.price || !newProduct.stock || !newProduct.category) {
-        hidden.classList.remove('hidden')
+btnForm.addEventListener("click", (e) => {
+    e.preventDefault();
+    const hidden = document.querySelector('.hidden');
+    
+    if (!Object.keys(newProduct).length) {
+        hidden.classList.remove('hidden');
     } else {
-        newProduct.stock = parseInt(newProduct.stock)
-        newProduct.price = parseInt(newProduct.price)
-        hidden.classList.add('hidden')
-        socket.emit('new-product', newProduct)
-        newProduct = {}
-        inputs.forEach(input=>{
-            input.value = ""
-        })
+        newProduct.stock = parseInt(newProduct.stock);
+        newProduct.price = parseFloat(newProduct.price);
+        
+        hidden.classList.add('hidden');
+        socket.emit('new-product', newProduct);
+        newProduct = {};
+        inputs.forEach(input => {
+            input.value = "";
+        });
     }
-})
+});
+
+socket.on('error-agregar-producto', error => {
+    console.error('Error al agregar producto:', error);
+    alert('Error al agregar producto: ' + error);
+});
+
+socket.on('new-product-added', product => {
+    console.log('Nuevo producto agregado:', product);
+    // Aquí puedes actualizar tu lista localmente si lo deseas
+});

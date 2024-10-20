@@ -43,15 +43,23 @@ const io = new Server(httpServer)
 
 const prodManag = new ProductManager()
 
-io.on('connection', async (socket)=>{
-    const products = await prodManag.getAllProducts()
-    socket.emit('productsList', products)
+io.on('connection', async (socket) => {
+    const products = await prodManag.getAllProducts();
+    socket.emit('productsList', products);
 
-    socket.on('deleting-product', id=>{
-        prodManag.deleteProduct(id)
-    })
+    socket.on('deleting-product', id => {
+        prodManag.deleteProduct(id);
+    });
 
-    socket.on('new-product', product=>{
-        prodManag.setProduct(product)
-    })
-})
+    socket.on('new-product', async (newProduct) => {
+        try {
+            const addedProduct = await prodManag.addProduct(newProduct);
+            socket.emit('new-product-added', addedProduct);
+        } catch (error) {
+            console.error('Error al agregar producto:', error);
+            socket.emit('error-agregar-producto', error.message);
+        }
+    });
+});
+
+
