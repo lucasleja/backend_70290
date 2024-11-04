@@ -1,4 +1,4 @@
-import fs from 'fs/promises';
+/* import fs from 'fs/promises';
 import path from 'path';
 
 const cartsFilePath = path.resolve('data', 'carts.json');
@@ -52,4 +52,61 @@ export default class CartManager {
     this.saveToFile();
     return cart;
   }
-}
+} */
+
+  import mongoose from 'mongoose';
+  import cartModel from '../models/cart.model.js';
+  
+  class CartManager {
+      static async createCart() {
+          const newCart = new cartModel();
+          return await newCart.save();
+      }
+  
+      static async getAllCarts() {
+          return await cartModel.find().populate('products.product');
+      }
+  
+      static async getCartById(cid) {
+          return await cartModel.findById(cid).populate('products.product');
+      }
+  
+      static async addProductToCart(cid, pid, quantity) {
+          return await cartModel.findByIdAndUpdate(
+              cid,
+              { $addToSet: { products: { product: pid, quantity: quantity } } },
+              { new: true }
+          ).populate('products.product');
+      }
+  
+      static async deleteProductFromCart(cid, pid) {
+          return await cartModel.findByIdAndUpdate(
+              cid,
+              { $pull: { products: { product: pid } } },
+              { new: true }
+          ).populate('products.product');
+      }
+  
+      static async updateCartProducts(cid, products) {
+          return await cartModel.findByIdAndUpdate(
+              cid,
+              { products: products },
+              { new: true }
+          ).populate('products.product');
+      }
+  
+      static async updateProductQuantity(cid, pid, quantity) {
+          return await cartModel.findOneAndUpdate(
+              { _id: cid, 'products.product': pid },
+              { $set: { 'products.$.quantity': quantity } },
+              { new: true }
+          ).populate('products.product');
+      }
+  
+      static async deleteCart(cid) {
+          return await cartModel.findByIdAndDelete(cid);
+      }
+  }
+  
+  export default CartManager;
+  
