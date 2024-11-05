@@ -1,4 +1,4 @@
-<h1>List of products</h1>
+{{!-- <h1>List of products</h1>
 <div class="product-list">
     {{#each products}}
     <div id="product">
@@ -10,4 +10,45 @@
         <p>Category: {{this.category}}</p>
     </div>
     {{/each}}
+</div> --}}
+
+
+{% extends "layouts/main.handlebars" %}
+
+{% block body %}
+<div class="container">
+    <h1>Productos</h1>
+    
+    {% if products %}
+        <ul>
+            {% for product in products %}
+                <li>
+                    <h2>{{product.title}}</h2>
+                    <p>Precio: ${{product.price}}</p>
+                    <p>Descripción: {{product.description}}</p>
+                    <img src="{{product.thumbnail}}" alt="Thumbnail">
+                    <button class="btn btn-primary">Agregar al carrito</button>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay productos disponibles.</p>
+    {% endif %}
+    
+    <a href="/realtimeproducts">Ver productos en tiempo real</a>
 </div>
+
+<script>
+    // Aquí puedes agregar código JavaScript para manejar eventos del teclado o clics
+    document.addEventListener('DOMContentLoaded', function() {
+        const addToCartButtons = document.querySelectorAll('.btn-primary');
+        
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Aquí iría el código para agregar el producto al carrito
+                console.log('Agregar producto al carrito');
+            });
+        });
+    });
+</script>
+{% endblock %}
