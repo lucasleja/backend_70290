@@ -17,7 +17,7 @@ class ProductManager {
         if (limit) {
             return await ProductModel.find().limit(limit);
         }
-        return await ProductModel.find();
+        return await ProductModel.find().lean();
     }
 
     static async getProductById(id) {
