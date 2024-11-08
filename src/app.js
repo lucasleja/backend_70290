@@ -32,6 +32,40 @@ const httpServer = app.listen(PORT, ()=>{
     console.log(`Servidor escuchando en el puerto ${PORT}`)
 })
 
+
+const io = new Server(httpServer)
+
+const prodManag = new ProductManager()
+const cartManag = new CartManager()
+
+io.on('connection', async (socket)=>{
+    const products = await prodManag.getProducts()
+    socket.emit('productsList', products)
+
+    socket.on('deleting-product', async(id)=>{
+        await prodManag.deleteProduct(id)
+        const products = await prodManag.getProducts()
+        socket.emit('productsList', products)
+    })
+
+    socket.on('new-product', async(product)=>{
+        await prodManag.setProduct(product)
+        const products = await prodManag.getProducts()
+        socket.emit('productsList', products)
+    })
+    
+    socket.on('add-to-cart', async(obj)=>{
+        await cartManag.addProductToCart(obj.prodId, obj.newCart._id)
+    })
+    
+    socket.on('createCart', async(msg)=>{
+        const cart = await cartManag.addCart()
+        socket.emit('cart', cart)
+    })
+
+})
+
+
 // Coneccion a la DB
 const PathDB = 'mongodb+srv://lejarragalucas:808MJQbvJmz5ZhYF@cluster0.27oim.mongodb.net/backend_70290?retryWrites=true&w=majority&appName=Cluster0'
 const connectMongoDB = async () => {
@@ -45,13 +79,10 @@ const connectMongoDB = async () => {
 }
 connectMongoDB()
 
-const io = new Server(httpServer)
 
-const prodManag = ProductManager; // No necesita instanciarlo como clase
-const cartManag = CartManager;
 
-io.on('connection', async (socket) => {
-    const products = await ProductManager.getAllProducts();
+/* io.on('connection', async (socket) => {
+    const products = await ProductManager.getProducts();
     socket.emit('productsList', products);
 
     socket.on('deleting-product', id => {
@@ -67,9 +98,9 @@ io.on('connection', async (socket) => {
             socket.emit('error-agregar-producto', error.message);
         }
     });
-
+ */
     // Eventos para carritos
-    socket.on('get-carts', async () => {
+/*     socket.on('get-carts', async () => {
         const carts = await CartManager.getAllCarts();
         socket.emit('cartsList', carts);
     });
@@ -93,7 +124,7 @@ io.on('connection', async (socket) => {
             socket.emit('error-eliminar-del-carrito', error.message);
         }
     });
-});
+}); */
 
 
 
