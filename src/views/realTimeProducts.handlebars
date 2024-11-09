@@ -1,8 +1,6 @@
-<h1>Products</h1>
+<h1>Productos</h1>
 
-<h2>Add a new product</h2>
-
-<form action="/api/products" method="post" class="formAddProduct">
+<form action="/api/products" method="post">
     <label for="">Title</label><br>
     <input type="text" name="title" class="input"><br><br>
     <label for="">Description</label><br>
@@ -19,7 +17,7 @@
     <button type="input" class="btn-form" id="btnForm">Add</button>
 </form>
 
-<h2>List of products</h2>
+<h2>Lista de productos</h2>
 <div id="productsList"></div>
 
 <script src="socket.io/socket.io.js"></script>

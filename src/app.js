@@ -14,6 +14,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+
 // Configurar Handlebars como motor de plantillas
 app.engine('handlebars', handlebars.engine())
 app.set('views', __dirname + '/views');
@@ -34,6 +36,21 @@ const httpServer = app.listen(PORT, ()=>{
 
 
 const io = new Server(httpServer)
+
+// Coneccion a la DB
+const PathDB = 'mongodb+srv://lejarragalucas:808MJQbvJmz5ZhYF@cluster0.27oim.mongodb.net/backend_70290?retryWrites=true&w=majority&appName=Cluster0'
+const connectMongoDB = async () => {
+    try {
+        await mongoose.connect(PathDB)
+        console.log("Conectado a la base de datos MongoDB");
+    } catch (error) {
+        console.error("No se pudo conectar a la BD usando Moongose: " + error);
+        process.exit();
+    }
+}
+connectMongoDB()
+
+
 
 const prodManag = new ProductManager()
 const cartManag = new CartManager()
@@ -66,18 +83,7 @@ io.on('connection', async (socket)=>{
 })
 
 
-// Coneccion a la DB
-const PathDB = 'mongodb+srv://lejarragalucas:808MJQbvJmz5ZhYF@cluster0.27oim.mongodb.net/backend_70290?retryWrites=true&w=majority&appName=Cluster0'
-const connectMongoDB = async () => {
-    try {
-        await mongoose.connect(PathDB)
-        console.log("Conectado a la base de datos MongoDB");
-    } catch (error) {
-        console.error("No se pudo conectar a la BD usando Moongose: " + error);
-        process.exit();
-    }
-}
-connectMongoDB()
+
 
 
 

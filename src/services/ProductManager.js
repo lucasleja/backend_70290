@@ -1,45 +1,67 @@
-/* import mongoose from 'mongoose'; */
-
-import productosModel from '../models/productos.model.js';
-
-/* const ProductModel = mongoose.model('Product', productosSchema); */
-
+import productsModel from "../models/products.model.js"
 import __dirname from '../utils.js'
 
 export default class ProductManager {
 
-    async getProduct(limit, page, category, sort) {
+/*     async getProducts(limit, page, category, sort) {
         try {
             if (!limit) limit = 10
             if (!page) page = 1
             if (category) {
                 if (sort) {
-                    const products = await productosModel.paginate({category: category}, {limit: limit, page: page, lean:true, sort: {price: sort}})
+                    const products = await productsModel.paginate({category: category}, {limit: limit, page: page, lean:true, sort: {price: sort}})
                     return products
                 } else {
-                    const products = await productosModel.paginate({category: category}, {limit: limit, page: page, lean:true})
+                    const products = await productsModel.paginate({category: category}, {limit: limit, page: page, lean:true})
                     return products
                 }
             } else {
                 if (sort) {
-                    const products = await productosModel.paginate({}, {limit: limit, page: page, lean:true, sort: {price: sort}})
+                    const products = await productsModel.paginate({}, {limit: limit, page: page, lean:true, sort: {price: sort}})
                     return products
                 } else {
-                    const products = await productosModel.paginate({}, {limit: limit, page: page, lean:true})
+                    const products = await productsModel.paginate({}, {limit: limit, page: page, lean:true})
                     return products
                 }
             }
         } catch (error) {
             console.log(`Error: ${error}`)
         }
+    } */
+
+
+    async getProducts(limit, page, category, sort) {
+        try {
+            if (!limit) limit = 10
+            if (!page) page = 1
+            if (category) {
+                if (sort) {
+                    const products = await productsModel.paginate({category: category}, {limit: limit, page: page, lean:true, sort: {price: sort}})
+                    return products
+                } else {
+                    const products = await productsModel.paginate({category: category}, {limit: limit, page: page, lean:true})
+                    return products
+                }
+            } else {
+                if (sort) {
+                    const products = await productsModel.paginate({}, {limit: limit, page: page, lean:true, sort: {price: sort}})
+                    return products
+                } else {
+                    const products = await productsModel.paginate({}, {limit: limit, page: page, lean:true})
+                    return products
+                }
+            }
+        } catch (error) {
+            console.log(`Error al obtener productos: ${error.message}`)
+        }
     }
 
     async getProduct(id) {
         try {
-            const product = await productosModel.findOne({_id: id})
+            const product = await productsModel.findOne({_id: id})
             return product
         } catch (error) {
-            console.log(`Error: ${error}`)
+            console.log(`Error al obtener producto con id ${id}: ${error.message}`)
         }
     }
 
@@ -54,16 +76,16 @@ export default class ProductManager {
             } else {
                 newProduct.thumbnails = []
             }
-            productosModel.create(newProduct)
+            productsModel.create(newProduct)
             return newProduct
         } catch (error) {
-            console.log(`Error: ${error}`)
+            console.log(`Error al crear producto: ${error.message}`)
         }
     }
 
     async editProduct(productId, modifiedProduct, img) {
         try {
-            const product = await productosModel.findOne({_id: productId})
+            const product = await productsModel.findOne({_id: productId})
             let {title,description,code,price,stock,category,status,thumbnails} = product
             let newProduct = {
                     title,
@@ -79,118 +101,19 @@ export default class ProductManager {
             if (img) {
                 newProduct.thumbnails.push(`${__dirname}/public/img/${img.filename}`)
             }
-            await productosModel.updateOne({_id: productId}, { $set: newProduct})
+            await productsModel.updateOne({_id: productId}, { $set: newProduct})
         return newProduct
         } catch (error) {
-            console.log(`Error: ${error}`)
+            console.log(`Error al editar producto con id ${productId}: ${error.message}`)
         }
     }
 
     async deleteProduct(id) {
         try {
-            const deleteProduct = await productosModel.deleteOne({_id: id})
+            const deleteProduct = await productsModel.deleteOne({_id: id})
             return deleteProduct
         } catch (error) {
-            console.log(`Error: ${error}`)
+            console.log(`Error al eliminar producto con id ${id}: ${error.message}`)
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* class ProductManager {
-    static async getAllProducts(limit) {
-        if (limit) {
-            return await ProductModel.find().limit(limit);
-        }
-        return await ProductModel.find().lean();
-    }
-
-    static async getProductById(id) {
-        return await ProductModel.findById(id);
-    }
-
-    static async addProduct(productData) {
-        const newProduct = new ProductModel(productData);
-        return await newProduct.save();
-    }
-
-    static async updateProduct(id, updatedFields) {
-        return await ProductModel.findByIdAndUpdate(id, updatedFields, { new: true });
-    }
-
-    static async deleteProduct(id) {
-        return await ProductModel.findByIdAndDelete(id);
-    }
-}
-
-export default ProductManager;
- */
-
-
-
-
-
-
-// En src/services/ProductManager.js
-
-
-/* import mongoose from 'mongoose';
-
-const productosSchema = new mongoose.Schema({
-    title: String,
-    price: Number,
-    thumbnail: String,
-    stock: Number,
-    description: String,
-    category: String,
-    status: Boolean
-}, { timestamps: true });
-
-const ProductModel = mongoose.model('Product', productosSchema);
-
-class ProductManager {
-    static async getAllProducts(filter = {}, sortOption = {}, skip = 0, limit = 10) {
-        const products = await ProductModel.find(filter)
-            .sort(sortOption)
-            .skip(skip)
-            .limit(limit)
-            .lean();
-        
-        return products;
-    }
-
-    // ... resto de los métodos sin cambios ...
-
-    static async countDocuments(filter = {}) {
-        return await ProductModel.countDocuments(filter);
-    }
-}
-
-export default ProductManager;
- */
-

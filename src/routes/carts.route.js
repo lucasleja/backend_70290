@@ -26,7 +26,7 @@ router.get('/:cid', async (req, res) => {
     }
 })
 
-router.post('/:cid/product/:pid', async (req, res) => {
+/* router.post('/:cid/product/:pid', async (req, res) => {
     try {
         const cartId = req.params.cid
         const prodId = req.params.pid
@@ -36,7 +36,21 @@ router.post('/:cid/product/:pid', async (req, res) => {
     } catch(err) {
         res.status(400).send({error:err})
     }
-})
+}) */
+
+    router.post('/:cid/product/:pid', async (req, res) => {
+        try {
+            const cartId = req.params.cid
+            const prodId = req.params.pid
+            const quantity = req.body.quantity
+            const prodAdded = await cartManag.addProductToCart(prodId, cartId, quantity)
+            if (prodAdded !== undefined) res.status(201).send(prodAdded)
+            if (prodAdded === undefined) res.status(400).send({error: 'invalid data'})
+        } catch(err) {
+            res.status(400).send({error:err})
+        }
+    })
+
 
 router.delete('/:cid/product/:pid', async (req, res) => {
     try {

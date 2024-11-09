@@ -1,140 +1,34 @@
-/* import express from 'express'
-import ProductManager from '../services/ProductManager.js'
-
-const router = express.Router()
-const prodManag = new ProductManager()
-
-router.get('/', async(req, res)=>{
-    const products = await prodManag.getAllProducts()
-    res.render('home', {products})
-})
-
-router.get('/realtimeproducts', (req, res)=> {
-    res.render('realTimeProducts')
-})
-
-export default router
- */
-
-
 import express from 'express'
 import ProductManager from '../services/ProductManager.js'
+import CartManager from '../services/CartManager.js'
 
 const router = express.Router()
 const prodManag = new ProductManager()
+const cartManag = new CartManager()
 
 router.get('/', async(req, res)=>{
-    const products = await ProductManager.getAllProducts()
+    const limit = parseInt(req.query.limit)
+    const page = parseInt(req.query.page)
+    const category = req.query.category
+    const sort = parseInt(req.query.sort)
+    const products = await prodManag.getProducts(limit, page, category, sort)
+    const linkPrevPage = products.hasPrevPage ? `http://localhost:8080/?page=${products.prevPage}&limit=${limit}` : ""
+    const linkNextPage = products.hasNextPage ? `http://localhost:8080/?page=${products.nextPage}&limit=${limit}` : ""
+    products.linkPrevPage = linkPrevPage
+    products.linkNextPage = linkNextPage
     res.render('home', {products})
 })
 
-router.get('/realtimeproducts', (req, res)=> {
-    res.render('realTimeProducts')
-})
-
-export default router
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* import express from 'express'
-import ProductManager from '../services/ProductManager.js'
-
-const router = express.Router()
-
-// Creamos una instancia de ProductManager
-const prodManag = new ProductManager()
-
-router.get('/', async(req, res)=>{
-    try {
-        const products = await prodManag.getAllProducts()
-        res.render('home', {products})
-    } catch (error) {
-        console.error('Error al cargar productos:', error)
-        res.status(500).render('error', {message: 'Hubo un problema al cargar los productos'})
-    }
-})
-
-router.get('/realtimeproducts', (req, res)=> {
-    try {
-        const products = await prodManag.getAllProducts()
-        res.render('realTimeProducts', {products})
-    } catch (error) {
-        console.error('Error al cargar productos:', error)
-        res.status(500).render('error', {message: 'Hubo un problema al cargar los productos'})
-    }
-})
-
-export default router
- */
-
-
-
-
-
-
-/* import express from 'express'
-import ProductManager from '../services/ProductManager.js'
-
-const router = express.Router()
-const prodManag = new ProductManager()
-
-router.get('/', async(req, res)=>{
-    const products = await prodManag.getAllProducts()
-    res.render('home', {products})
+router.get('/carts/:cid', async(req, res)=>{
+    const cartId = req.params.cid
+    const cart = await cartManag.getCart(cartId)
+    const products = cart.products
+    const noEmpty = products.length > 0
+    res.render('cart', {products, noEmpty})
 })
 
 router.get('/realtimeproducts', (req, res)=> {
     res.render('realTimeProducts')
 })
 
-export default router */
-
-
-
-
-
-
-
-
-
-
-// src/routes/views.routes.js
-
-/* import express from 'express'
-import ProductManager from '../services/ProductManager.js'
-
-const router = express.Router()
-
-// Instancia de ProductManager
-const prodManag = new ProductManager()
-
-router.get('/', async (req, res) => {
-    try {
-        const products = await prodManag.getAllProducts()
-        res.render('home', { products })
-    } catch (error) {
-        console.error('Error al obtener productos:', error)
-        res.status(500).json({ message: 'Error interno' })
-    }
-})
-
-router.get('/realtimeproducts', (req, res) => {
-    res.render('realTimeProducts')
-})
-
 export default router
- */
-
